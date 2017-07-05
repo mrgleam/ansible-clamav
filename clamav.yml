@@ -97,11 +97,27 @@
       dest: /lib/systemd/system/{{item}}
     with_items:
      - clam-freshclam.service
+     - clamd.service
+     - clamd@scan.service
+  - name: ensure file exists
+    copy:
+      content: ""
+      dest: /var/log/clamd.log
+      force: no
+      group: clamscan
+      owner: root
+      mode: 0664
   - name: ensure clam-freshclam is running
     service:
       name: clam-freshclam
       state: started
       enabled: yes
+  - name: Creates schedule scan cronjob
+    cron: minute="20" hour="3"
+          name="Schedule scan (daily schedule)"
+          cron_file="clamscan-DailyBackups"
+          user="root"
+          job="clamdscan -c /etc/clamd.d/clamd.conf /"
   handlers:
     - name: restart clam-freshclam
       service:
