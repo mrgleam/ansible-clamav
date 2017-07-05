@@ -4,6 +4,7 @@
   become: yes
   become_method: sudo
   vars:
+    clamav_repo: clamav.local
     package_clamav: clamav-0.99.2-1.el7.x86_64.rpm
     package_clamav_data: clamav-data-0.99.2-1.el7.noarch.rpm
     package_clamav_devel: clamav-devel-0.99.2-1.el7.x86_64.rpm
@@ -78,3 +79,7 @@
       - "{{ package_openssl_devel }}"
       - "{{ package_pcre_devel }}"
       - "{{ package_zlib_devel }}"
+  - name: write the freshclam config file
+    template:
+      src: configs/freshclam.j2
+      dest: /etc/freshclam.conf
