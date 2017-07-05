@@ -117,7 +117,7 @@
           name="Schedule scan (daily schedule)"
           cron_file="clamscan-DailyBackups"
           user="root"
-          job="clamdscan -c /etc/clamd.d/clamd.conf /"
+          job="clamdscan -i --fdpass -c /etc/clamd.d/clamd.conf /"
   handlers:
     - name: restart clam-freshclam
       service:
