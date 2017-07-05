@@ -53,7 +53,7 @@
       - "{{ package_openssl_devel }}"
       - "{{ package_pcre_devel }}"
       - "{{ package_zlib_devel }}"
-  - name: install OSSEC Agent
+  - name: install ClamAV
     yum:
       name: /tmp/{{item}}
       state: present
@@ -83,6 +83,14 @@
     template:
       src: configs/freshclam.j2
       dest: /etc/freshclam.conf
+  - name: write the clamd config file
+    template:
+      src: configs/clamd.j2
+      dest: /etc/clamd.d/clamd.conf
+  - name: Run the command for enable antivirus_can_scan_system
+    command: setsebool -P antivirus_can_scan_system 1
+  - name: Run the command for enable antivirus_use_jit
+    command: setsebool -P antivirus_use_jit 1
   - name: Copy systemd services file to server
     copy:
       src: systemd/{{item}}
@@ -93,6 +101,7 @@
     service:
       name: clam-freshclam
       state: started
+      enabled: yes
   handlers:
     - name: restart clam-freshclam
       service:
