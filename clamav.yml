@@ -1,5 +1,5 @@
 ---
-- hosts: all:!ossim-server
+- hosts: all:!ossim-server:!clamav-repo
   remote_user: vagrant
   become: yes
   become_method: sudo
@@ -83,3 +83,18 @@
     template:
       src: configs/freshclam.j2
       dest: /etc/freshclam.conf
+  - name: Copy systemd services file to server
+    copy:
+      src: systemd/{{item}}
+      dest: /lib/systemd/system/{{item}}
+    with_items:
+     - clam-freshclam.service
+  - name: ensure clam-freshclam is running
+    service:
+      name: clam-freshclam
+      state: started
+  handlers:
+    - name: restart clam-freshclam
+      service:
+        name: clam-freshclam
+        state: restarted
