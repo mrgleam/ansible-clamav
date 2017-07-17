@@ -119,6 +119,11 @@
       name: clam-freshclam
       state: started
       enabled: yes
+  - name: ensure clamd@scan is running
+    service:
+      name: clamd@scan
+      state: started
+      enabled: yes
   - name: Creates schedule scan cronjob
     cron: minute="20" hour="3"
           name="Schedule scan (daily schedule)"
@@ -142,7 +147,11 @@
       service:
         name: clam-freshclam
         state: restarted
-    - name: restart rsyslogd
+    - name: restart clamd@scan
       service:
-        name: rsyslogd
+        name: clamd@scan
+        state: restarted
+    - name: restart rsyslog
+      service:
+        name: rsyslog
         state: restarted
