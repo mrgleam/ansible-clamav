@@ -4,6 +4,7 @@
   become: yes
   become_method: sudo
   vars:
+    rsyslog_server: 192.168.254.254
     clamav_repo: clamav.local
     package_clamav: clamav-0.99.2-1.el7.x86_64.rpm
     package_clamav_data: clamav-data-0.99.2-1.el7.noarch.rpm
@@ -83,10 +84,16 @@
     template:
       src: configs/freshclam.j2
       dest: /etc/freshclam.conf
+      owner: root
+      group: root
+      mode: 0644
   - name: write the clamd config file
     template:
       src: configs/clamd.j2
       dest: /etc/clamd.d/clamd.conf
+      owner: root
+      group: root
+      mode: 0644
   - name: Run the command for enable antivirus_can_scan_system
     command: setsebool -P antivirus_can_scan_system 1
   - name: Run the command for enable antivirus_use_jit
@@ -118,8 +125,24 @@
           cron_file="clamscan-DailyBackups"
           user="root"
           job="clamdscan -i -c /etc/clamd.d/clamd.conf /*"
+  - name: write the rsyslog config file
+    template:
+      src: configs/rsyslog.j2
+      dest: /etc/rsyslog.conf
+      owner: root
+      group: root
+      mode: 0644
+  - name: ensure rsyslog is running
+    service:
+      name: rsyslog
+      state: started
+      enabled: yes
   handlers:
     - name: restart clam-freshclam
       service:
         name: clam-freshclam
+        state: restarted
+    - name: restart rsyslogd
+      service:
+        name: rsyslogd
         state: restarted
