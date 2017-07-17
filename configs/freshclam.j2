@@ -72,8 +72,7 @@ LogSyslog yes
 # reliable mirrors. It's used as a fall back in case db.XY.clamav.net is
 # not working. DO NOT TOUCH the following line unless you know what you
 # are doing.
-#DatabaseMirror database.clamav.net
-DatabaseMirror {{ clamav_repo }}
+DatabaseMirror database.clamav.net
 
 # How many attempts to make before giving up.
 # Default: 3 (per mirror)
@@ -108,6 +107,7 @@ CompressLocalDatabase yes
 # Default: disabled
 #PrivateMirror mirror1.mynetwork.com
 #PrivateMirror mirror2.mynetwork.com
+PrivateMirror {{ clamav_repo }}
 
 # Number of database checks per day.
 # Default: 12 (every two hours)
